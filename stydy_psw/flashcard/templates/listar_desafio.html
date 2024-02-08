@@ -25,8 +25,13 @@
                 <label for="">Categoria</label>
 
                 <select name="categoria" class="form-select">
+                    <option value=''></option>
 
-                   
+                    {% for categoria in categorias %}
+                        <option value='{{categoria.id}}'>{{categoria}}</option>
+
+                    {% endfor %}
+
                 </select>
 
             </div>
@@ -35,7 +40,12 @@
                 <label for="">Dificuldade</label>
 
                 <select name="dificuldade" class="form-select">
+                    <option value=''></option>
 
+                    {% for dificuldade in dificuldades %}
+                        <option value='{{dificuldade.0}}'>{{dificuldade.1}}</option>
+
+                    {% endfor %}
                     
                 </select>
 

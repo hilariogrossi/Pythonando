@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
-from . models import Apostila, ViewApostila
+from . models import Apostila, ViewApostila, Tags
 from django.contrib.messages import constants
 from django.contrib import messages
 
@@ -9,11 +9,9 @@ def adicionar_apostilas(request):
         apostilas = Apostila.objects.filter(user=request.user)
         view_totais = ViewApostila.objects.filter(apostila__user=request.user).count()
 
-        # TODO: Criar as tags
-
         return render(request, 'adicionar_apostilas.html', {'apostilas': apostilas, 
                                                             'view_totais': view_totais})
-    
+
     elif request.method == 'POST':
         titulo = request.POST.get('titulo')
         arquivo = request.FILES['arquivo']
@@ -24,6 +22,19 @@ def adicionar_apostilas(request):
             arquivo=arquivo,
 
         )
+
+        apostila.save()
+
+        tags = request.POST.get('tags')
+        list_tags = tags.split(',')
+
+        for tag in list_tags:
+            nova_tag = Tags(
+                nome=tag
+            )
+
+            nova_tag.save()
+            apostila.tags.add(nova_tag)
 
         apostila.save()
 
@@ -44,11 +55,7 @@ def apostila(request, id):
 
     view.save()
 
-    return render(request, 'apostila.html', 
-                  {'apostila': apostila, 
-                   'views_totais': views_totais, 
+    return render(request, 'apostila.html',
+                  {'apostila': apostila,
+                   'views_totais': views_totais,
                    'views_unicas': views_unicas})
-
-
-
-

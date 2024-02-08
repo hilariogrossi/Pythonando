@@ -129,10 +129,22 @@ def iniciar_desafio(request):
 
 def listar_desafio(request):
     desafios = Desafio.objects.filter(user=request.user)
-    # TODO: desenvolver os status
-    # TODO: desenvolver os filtros
 
-    return render(request, 'listar_desafio.html', {'desafios': desafios})
+    categorias = Categoria.objects.all()
+    dificuldades = Flashcard.DIFICULDADE_CHOICES
+
+    categoria = request.GET.get('categoria')
+    dificuldade = request.GET.get('dificuldade')
+
+    if categoria:
+        desafios = desafios.filter(categoria__id=categoria)
+
+    if dificuldade:
+        desafios = desafios.filter(dificuldade=dificuldade)
+
+    return render(request, 'listar_desafio.html', {'desafios': desafios,
+                                                   'categorias': categorias,
+                                                   'dificuldades': dificuldades})
 
 def desafio(request, id):
     desafio = Desafio.objects.get(id=id)
@@ -195,10 +207,8 @@ def relatorio(request, id):
         dados_2.append(desafio.flashcards
                        .filter(flashcard__categoria=categoria)
                        .filter(acertou=True).count())
-    
-    # TODO: Fazer o ranking
 
-    return render(request, 'relatorio.html', {'desafio': desafio, 
-                                              'dados_1': dados_1, 
+    return render(request, 'relatorio.html', {'desafio': desafio,
+                                              'dados_1': dados_1,
                                               'categoria': name_categoria,
                                               'dados_2': dados_2})
